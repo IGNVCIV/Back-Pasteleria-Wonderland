@@ -23,6 +23,5 @@ Thumbs.db
 
 # Spring profiles
 application-*.properties
-!application.properties
 !application-prod.properties
 application-*.yml
