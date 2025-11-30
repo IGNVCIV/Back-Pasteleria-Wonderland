@@ -38,13 +38,13 @@ mvn spring-boot:run
 
 ## Configuración necesaria
 
-El proyecto incluye dos archivos de configuración:
+El proyecto incluye un archivo de configuración para producción:
 
-application.properties (desarrollo / local)
+- `application-prod.properties` (usado al desplegar en Render)
 
-application-prod.properties (producción / Render)
+Las credenciales y valores sensibles (como contraseñas o claves JWT) se manejan mediante variables de entorno en Render.
 
-Los valores sensibles como contraseñas o claves JWT se manejan mediante variables de entorno.
+Para ejecutar el proyecto en un entorno local, se debe crear manualmente un archivo de configuración (`application.properties`) que no está incluido en el repositorio.
 
 Ejemplo mínimo de configuración local:
 
@@ -52,7 +52,6 @@ spring.datasource.url=jdbc:mysql://localhost:3306/db_wonderland?createDatabaseIf
 spring.datasource.username=root
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=create-drop
-
 
 ## Endpoints principales
 
