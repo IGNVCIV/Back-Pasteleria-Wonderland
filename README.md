@@ -19,13 +19,14 @@ El backend está construido con Spring Boot y expone una API REST para ser consu
 
 src/
 ├── main/
-│ ├── java/com/wonderland/WonderlandApp/
-│ │ ├── controller/ # Controladores REST
-│ │ ├── entity/ # Entidades JPA
-│ │ ├── repository/ # Repositorios JPA
-│ │ ├── service/ # Servicios y reglas de negocio
-│ │ └── config/ # Configuración general (CORS, seguridad, etc.)
-│ └── resources/ # application.properties, data.sql, etc.
+│   ├── java/com/wonderland/WonderlandApp/
+│   │   ├── controller/      # Controladores REST
+│   │   ├── entity/          # Entidades JPA
+│   │   ├── repository/      # Repositorios JPA
+│   │   ├── service/         # Servicios y lógica de negocio
+│   │   └── config/          # Configuración (CORS, seguridad, etc.)
+│   └── resources/           # application.properties, application-prod.properties, etc.
+
 
 
 ## Ejecución del proyecto
@@ -37,14 +38,20 @@ mvn spring-boot:run
 
 ## Configuración necesaria
 
-El archivo `application.properties` no se incluye en el repositorio por motivos de seguridad.  
-Debe crearse manualmente con la configuración de la base de datos.  
-Ejemplo mínimo:
+El proyecto incluye dos archivos de configuración:
 
-spring.datasource.url=jdbc:mysql://localhost:3306/wonderland
+application.properties (desarrollo / local)
+
+application-prod.properties (producción / Render)
+
+Los valores sensibles como contraseñas o claves JWT se manejan mediante variables de entorno.
+
+Ejemplo mínimo de configuración local:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/db_wonderland?createDatabaseIfNotExist=true
 spring.datasource.username=root
-spring.datasource.password=tu_password
-spring.jpa.hibernate.ddl-auto=update
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=create-drop
 
 
 ## Endpoints principales
