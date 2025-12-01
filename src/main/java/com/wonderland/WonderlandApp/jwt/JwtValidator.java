@@ -14,19 +14,10 @@ public class JwtValidator {
   @Value("${SECRET_KEY}")
   private String SECRET_KEY;
 
-  private Key getCompatibleKey() {
-    byte[] keyBytes = SECRET_KEY.getBytes();
-    byte[] padded = new byte[32];
-    System.arraycopy(keyBytes, 0, padded, 0, Math.min(keyBytes.length, 32)); // Copiamos solo lo que quepa, el resto queda en 0
-    return new SecretKeySpec(padded, "HmacSHA256");
-  }
-
   public Claims isTokenValid(String token) {
       try {
-          Key key = getCompatibleKey();// <--- clave como bytes, no Key
-
           return Jwts.parserBuilder()
-                  .setSigningKey(key)
+                  .setSigningKey(SECRET_KEY.getBytes())
                   .build()
                   .parseClaimsJws(token)
                   .getBody();

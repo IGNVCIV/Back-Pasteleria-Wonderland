@@ -2,6 +2,9 @@ package com.wonderland.WonderlandApp.config;
 
 import org.springframework.http.HttpMethod;
 import com.wonderland.WonderlandApp.jwt.*;
+
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 public class SecurityConfig {
@@ -24,26 +28,39 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
-          .csrf(AbstractHttpConfigurer::disable)
+          .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of(
+                        "http://localhost:3000/",
+                        "http://localhost:5173/"
+                    ));
+
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    corsConfig.setExposedHeaders(List.of("Authorization"));
+                    corsConfig.setAllowCredentials(true);
+                    return corsConfig;
+            }))
+          .csrf(csrf -> csrf.disable()) 
           .authorizeHttpRequests(auth -> auth
 
               .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/v1/mensajes").permitAll()
               .requestMatchers(HttpMethod.GET, "/api/v1/productos/**").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/v1/pedidos").permitAll()
-              .requestMatchers(HttpMethod.GET, "/api/v1/pedidos/*").permitAll()
+              .requestMatchers(HttpMethod.GET, "/api/v1/pedidos/").permitAll()
 
-              .requestMatchers(HttpMethod.POST, "/api/v1/productos/**").hasRole("ADMIN")
-              .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**").hasRole("ADMIN")
-              .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**").hasRole("ADMIN")
-              .requestMatchers("/api/v1/empleados/**").hasRole("ADMIN")
+              .requestMatchers(HttpMethod.POST, "/api/v1/productos/").hasRole("ADMIN")
+              .requestMatchers(HttpMethod.PUT, "/api/v1/productos/").hasRole("ADMIN")
+              .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/").hasRole("ADMIN")
+              .requestMatchers("/api/v1/empleados/").hasRole("ADMIN")
 
-              .requestMatchers(HttpMethod.GET, "/api/v1/mensajes/**").hasAnyRole("ADMIN", "EMPLEADO")
-              .requestMatchers(HttpMethod.PUT, "/api/v1/mensajes/**").hasAnyRole("ADMIN", "EMPLEADO")
-              .requestMatchers(HttpMethod.DELETE, "/api/v1/mensajes/**").hasAnyRole("ADMIN", "EMPLEADO")
+              .requestMatchers(HttpMethod.GET, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
+              .requestMatchers(HttpMethod.PUT, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
+              .requestMatchers(HttpMethod.DELETE, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
 
 
-              .requestMatchers("/api/v1/pedidos/**").authenticated()
+              .requestMatchers("/api/v1/pedidos/").authenticated()
               .requestMatchers("/api/v1/detalle-pedidos/**").authenticated()
 
               .anyRequest().authenticated()

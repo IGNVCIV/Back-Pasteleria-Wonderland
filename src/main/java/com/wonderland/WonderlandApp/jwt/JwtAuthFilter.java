@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String username = claims.getSubject();
         String role = claims.get("role", String.class);
-
+        System.out.println("ROLE FROM TOKEN = " + role);
         if (role == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
