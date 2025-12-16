@@ -2,7 +2,8 @@ package com.wonderland.WonderlandApp.controller;
 
 //Importaciones Modelo y Service
 import com.wonderland.WonderlandApp.service.AuthService;
-import com.wonderland.WonderlandApp.dto.*;
+import com.wonderland.WonderlandApp.dto.auth.LoginRequest;
+import com.wonderland.WonderlandApp.dto.auth.LoginResponse;
 
 //Importacion dependencias
 import org.springframework.beans.factory.annotation.Autowired;

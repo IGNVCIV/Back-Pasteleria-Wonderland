@@ -2,6 +2,7 @@ package com.wonderland.WonderlandApp.model;
 
 //Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //Importaciones para Lombok
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "mensaje_contacto")
 @Data
 @NoArgsConstructor
@@ -41,6 +43,7 @@ public class MessageContact {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idRequest", foreignKey = @ForeignKey(name = "fk_message_request"))
     @Schema(description = "Id de un pedido asocida de un mensaje de contacto (opcional)")
+    @JsonIgnoreProperties({"requestDetails"})
     private Request request;
 
     @Column(nullable = false, columnDefinition = "TEXT")

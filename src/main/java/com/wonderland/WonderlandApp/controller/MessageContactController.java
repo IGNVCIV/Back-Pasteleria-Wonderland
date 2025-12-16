@@ -1,5 +1,6 @@
 package com.wonderland.WonderlandApp.controller;
 
+import com.wonderland.WonderlandApp.dto.admin.AdminResponse.MessageContactResponse;
 // Importaciones del modelo y servicio
 import com.wonderland.WonderlandApp.model.MessageContact;
 import com.wonderland.WonderlandApp.service.MessageContactService;
@@ -60,13 +61,26 @@ public class MessageContactController {
             @ApiResponse(responseCode = "200", description = "Lista de mensajes obtenidos exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageContact.class))),
             @ApiResponse(responseCode = "204", description = "No hay mensajes registrados", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", example = "No se encuentran mensajes registrados en el sistema")))
     })
-    public ResponseEntity<List<MessageContact>> obtenerTodos() {
-        List<MessageContact> ejecuciones = messageContactService.findAll();
-        if (ejecuciones.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(ejecuciones);
+    public ResponseEntity<List<MessageContactResponse>> obtenerTodos() {
+        List<MessageContact> mensajes = messageContactService.findAll();
+        if (mensajes.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<MessageContactResponse> dto = mensajes.stream()
+            .map(m -> new MessageContactResponse(
+                m.getId(),
+                m.getFullName(),
+                m.getEmail(),
+                m.getPhone(),
+                m.getMessage(),
+                m.getStatus(),
+                m.getSentDate(),
+                (m.getRequest() != null ? m.getRequest().getIdRequest() : null)
+            ))
+            .toList();
+
+        return ResponseEntity.ok(dto);
     }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener un mensaje de contacto por ID", description = "Obtiene los detalles de un mensaje de contacto específico dado su ID.")
@@ -141,16 +155,17 @@ public class MessageContactController {
             })) @RequestBody MessageContact updatedMessage) {
         try {
             MessageContact existing = messageContactService.findById(id);
+
             if (updatedMessage.getStatus() != null && !updatedMessage.getStatus().isBlank()) {
                 existing.setStatus(updatedMessage.getStatus());
             }
             if (updatedMessage.getRequest() != null) {
                 existing.setRequest(updatedMessage.getRequest());
             }
-            MessageContact actualizado = messageContactService.save(existing);
 
-            return ResponseEntity.ok(actualizado);
+            messageContactService.save(existing);
 
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No se encontró un mensaje con ID: " + id);

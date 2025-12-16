@@ -29,39 +29,37 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
           .cors(cors -> cors.configurationSource(request -> {
-                    var corsConfig = new CorsConfiguration();
-                    corsConfig.setAllowedOrigins(List.of(
-                        "http://localhost:3000/",
-                        "http://localhost:5173/"
-                    ));
-
-                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-                    corsConfig.setExposedHeaders(List.of("Authorization"));
-                    corsConfig.setAllowCredentials(true);
-                    return corsConfig;
-            }))
+              var corsConfig = new CorsConfiguration();
+              corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+              corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+              corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+              corsConfig.setExposedHeaders(List.of("Authorization"));
+              corsConfig.setAllowCredentials(true);
+              return corsConfig;
+          }))
           .csrf(csrf -> csrf.disable()) 
           .authorizeHttpRequests(auth -> auth
 
+              // 1. RUTAS PÚBLICAS
               .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/v1/mensajes").permitAll()
+              
+              // Productos públicos
               .requestMatchers(HttpMethod.GET, "/api/v1/productos/**").permitAll()
+
+              // PEDIDOS PÚBLICOS (Crear y Consultar estado)
               .requestMatchers(HttpMethod.POST, "/api/v1/pedidos").permitAll()
-              .requestMatchers(HttpMethod.GET, "/api/v1/pedidos/").permitAll()
+              .requestMatchers(HttpMethod.GET, "/api/v1/pedidos/**").permitAll() 
 
-              .requestMatchers(HttpMethod.POST, "/api/v1/productos/").hasRole("ADMIN")
-              .requestMatchers(HttpMethod.PUT, "/api/v1/productos/").hasRole("ADMIN")
-              .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/").hasRole("ADMIN")
-              .requestMatchers("/api/v1/empleados/").hasRole("ADMIN")
+              // 2. RUTAS DE ADMINISTRADOR
+              .requestMatchers("/api/v1/productos/**").hasRole("ADMIN") 
+              .requestMatchers("/api/v1/empleados/**").hasRole("ADMIN")
+              .requestMatchers("/api/v1/mensajes/**").hasRole("ADMIN")
 
-              .requestMatchers(HttpMethod.GET, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
-              .requestMatchers(HttpMethod.PUT, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
-              .requestMatchers(HttpMethod.DELETE, "/api/v1/mensajes/").hasAnyRole("ADMIN", "EMPLEADO")
-
-
-              .requestMatchers("/api/v1/pedidos/").authenticated()
+              // 3. RUTAS AUTENTICADAS (Lo que sobre)
               .requestMatchers("/api/v1/detalle-pedidos/**").authenticated()
+              
+              // ELIMINADA LA LÍNEA: .requestMatchers("/api/v1/pedidos").authenticated() (CAUSABA CONFLICTO)
 
               .anyRequest().authenticated()
           )

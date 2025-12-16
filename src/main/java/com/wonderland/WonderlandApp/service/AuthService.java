@@ -2,8 +2,8 @@ package com.wonderland.WonderlandApp.service;
 
 //Importaciones del model y repository
 import com.wonderland.WonderlandApp.model.User;
-import com.wonderland.WonderlandApp.dto.LoginRequest;
-import com.wonderland.WonderlandApp.dto.LoginResponse;
+import com.wonderland.WonderlandApp.dto.auth.LoginRequest;
+import com.wonderland.WonderlandApp.dto.auth.LoginResponse;
 import com.wonderland.WonderlandApp.jwt.JwtGenerator;
 //Importacion para dependencias
 import org.springframework.beans.factory.annotation.Autowired;

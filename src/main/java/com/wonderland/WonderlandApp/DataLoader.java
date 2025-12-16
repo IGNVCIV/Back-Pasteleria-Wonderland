@@ -296,7 +296,7 @@ public class DataLoader implements CommandLineRunner {
         List<Request> requests = requestRepository.findAll();
         List<MessageContact> mensajes = new ArrayList<>();
 
-        String[] estadosMsg = { "PENDIENTE", "EN_PROCESO", "COMPLETADO" };
+        String[] estadosMsg = { "PENDIENTE", "EN_PROCESO", "RESUELTO" };
 
         // Mensajes con pedido
         for (int i = 0; i < Math.min(4, requests.size()); i++) {
@@ -304,8 +304,9 @@ public class DataLoader implements CommandLineRunner {
             Request req = requests.get(i);
 
             MessageContact m = new MessageContact();
-            m.setFullName(faker.name().fullName());
-            m.setEmail(faker.internet().emailAddress());
+            String nombreGenerado1 = faker.name().fullName();
+            m.setFullName(nombreGenerado1);
+            m.setEmail(faker.internet().emailAddress(nombreGenerado1));
             m.setPhone("+56 9 " + faker.number().digits(8));
             m.setMessage("Consulta sobre el pedido #" + req.getIdRequest());
             m.setSentDate(LocalDateTime.now().minusDays(faker.number().numberBetween(0, 50)));
@@ -319,8 +320,9 @@ public class DataLoader implements CommandLineRunner {
         for (int i = 0; i < 4; i++) {
 
             MessageContact m = new MessageContact();
-            m.setFullName(faker.name().fullName());
-            m.setEmail(faker.internet().emailAddress());
+            String nombreGenerado2 = faker.name().fullName();
+            m.setFullName(nombreGenerado2);
+            m.setEmail(faker.internet().emailAddress(nombreGenerado2));
             m.setPhone("+56 9 " + faker.number().digits(8));
             m.setMessage("Consulta general de contacto.");
             m.setSentDate(LocalDateTime.now().minusDays(faker.number().numberBetween(0, 50)));

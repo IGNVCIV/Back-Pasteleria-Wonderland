@@ -1,4 +1,4 @@
-package com.wonderland.WonderlandApp.dto;
+package com.wonderland.WonderlandApp.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
